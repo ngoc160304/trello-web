@@ -32,7 +32,7 @@ const Workspaces = () => {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
         sx={{
-          fontWeight: '600'
+          color: 'white'
         }}
       >
         Workspaces

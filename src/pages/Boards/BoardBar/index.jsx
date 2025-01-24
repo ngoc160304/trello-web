@@ -10,17 +10,17 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 const CustomChip = {
-  color: 'primary.main',
+  color: '#fff',
   px: 1,
-  '& .MuiChip-icon': {
-    color: 'primary.main'
+  '.MuiChip-icon': {
+    color: '#fff'
   },
-  borderColor: 'transparent',
   '&:hover': {
-    borderRadius: '4px',
-    borderColor: 'primary.main',
-    backgroundColor: 'transparent !important'
-  }
+    bgcolor: 'primary.50'
+  },
+  borderRadius: '4px',
+  bgcolor: 'transparent',
+  border: 'none'
 };
 const BoardBar = () => {
   return (
@@ -30,15 +30,17 @@ const BoardBar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         height: (theme) => theme.trello.boardBarHeight,
-        borderTop: '2px solid #3498db',
+        borderBottom: '2px solid #3498db',
         px: 2,
-        gap: 2
+        gap: 2,
+        bgcolor: (theme) => (theme.palette.mode == 'dark' ? '#34495e' : '#1976d2')
       }}
     >
       <Box
         sx={{
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
+          gap: 2
         }}
       >
         <Chip
@@ -79,11 +81,22 @@ const BoardBar = () => {
           gap: 2
         }}
       >
-        <Button variant="outlined" endIcon={<PersonAddAltIcon />}>
+        <Button
+          variant="outlined"
+          endIcon={<PersonAddAltIcon />}
+          sx={{
+            color: 'white',
+            borderColor: 'white',
+            '&:hover': {
+              borderColor: 'white'
+            }
+          }}
+        >
           Invite
         </Button>
         <AvatarGroup
           sx={{
+            gap: '8px',
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,

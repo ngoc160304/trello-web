@@ -14,7 +14,12 @@ import Tooltip from '@mui/material/Tooltip';
 import Profile from './Menus/Profile';
 import Button from '@mui/material/Button';
 import AddIcon from '@mui/icons-material/Add';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
+import CloseIcon from '@mui/icons-material/Close';
+import { useState } from 'react';
 const AppBar = () => {
+  const [searchValue, setSearchValue] = useState('');
   return (
     <>
       <Box
@@ -26,7 +31,8 @@ const AppBar = () => {
           px: 2,
           gap: 2,
           overflowX: 'auto',
-          overflowY: 'hidden'
+          overflowY: 'hidden',
+          bgcolor: (theme) => (theme.palette.mode == 'dark' ? '#2c3e50' : '#1565c0')
         }}
       >
         <Box
@@ -36,14 +42,23 @@ const AppBar = () => {
             gap: 2
           }}
         >
-          <AppsIcon />
+          <AppsIcon
+            sx={{
+              color: '#fff'
+            }}
+          />
           <Logo />
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
             <Workspaces />
             <Templates />
             <Started />
             <Recent />
-            <Button variant="outlined" startIcon={<AddIcon />}>
+            <Button
+              startIcon={<AddIcon />}
+              sx={{
+                color: 'white'
+              }}
+            >
               Create
             </Button>
           </Box>
@@ -56,20 +71,66 @@ const AppBar = () => {
           }}
         >
           <TextField
+            value={searchValue}
+            onChange={(e) => {
+              setSearchValue(e.target.value);
+            }}
             id="filled-search"
             label="Search"
-            type="search"
+            type="text"
             size="small"
-            sx={{ minWidth: '120px' }}
+            sx={{
+              minWidth: '120px',
+              maxWidth: '170px',
+              '& label': { color: 'white' },
+              '& input': {
+                color: 'white'
+              },
+              '& label.Mui-focused': {
+                color: 'white'
+              },
+              '& .MuiOutlinedInput-root': {
+                '& fieldset': {
+                  // borderWidth: '1px !important'
+                  borderColor: 'white'
+                },
+                '&:hover fieldset': {
+                  // borderWidth: '1px !important'
+                  borderColor: 'white'
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: 'white'
+                }
+              }
+            }}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon sx={{ color: 'white' }} />
+                </InputAdornment>
+              ),
+              endAdornment: (
+                <CloseIcon
+                  fontSize="small"
+                  sx={{
+                    color: searchValue ? 'white' : 'transparent',
+                    cursor: 'pointer'
+                  }}
+                  onClick={() => {
+                    setSearchValue('');
+                  }}
+                />
+              )
+            }}
           />
           <ModeSwitcher />
           <Tooltip title="Notification">
-            <Badge color="secondary" variant="dot">
-              <NotificationsNoneIcon sx={{ color: 'primary.main' }} />
+            <Badge color="warning" variant="dot">
+              <NotificationsNoneIcon sx={{ color: '#fff' }} />
             </Badge>
           </Tooltip>
           <Tooltip title="Help">
-            <HelpOutlineIcon sx={{ color: 'primary.main' }} />
+            <HelpOutlineIcon sx={{ color: '#fff' }} />
           </Tooltip>
           <Profile />
         </Box>

@@ -27,36 +27,41 @@ const theme = extendTheme({
         root: {
           fontSize: '0.875rem',
           textTransform: 'capitalize',
-          color: 'success.main'
+          color: 'success.main',
+          '&:hover': {
+          }
         }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: ({ theme }) => {
-          return {
-            // color: theme.palette.primary.main,
-            fontSize: '0.875rem',
-            // '& .MuiOutlinedInput-notchedOutline': {
-            //   borderColor: theme.palette.primary.light
-            // },
-            // '&:hover': {
-            //   '& .MuiOutlinedInput-notchedOutline': {
-            //     borderColor: theme.palette.primary.main
-            //   }
-            // }
-            // '& fi'
+        root: {
+          // color: theme.palette.primary.main,
+          fontSize: '0.875rem',
+          // '& .MuiOutlinedInput-notchedOutline': {
+          //   borderColor: theme.palette.primary.light
+          // },
+          // '&:hover': {
+          //   '& .MuiOutlinedInput-notchedOutline': {
+          //     borderColor: theme.palette.primary.main
+          //   }
+          // }
+          '& fieldset': {
+            borderWidth: '1px !important'
+          },
+          '&:hover fieldset': {
+            borderWidth: '2px !important'
+          },
+          '&.Mui-focused fieldset': {
+            borderWidth: '2px !important'
           }
         }
       }
     },
     MuiInputLabel: {
       styleOverrides: {
-        root: ({ theme }) => {
-          return {
-            // color: theme.palette.primary.main,
-            fontSize: '0.875rem'
-          }
+        root: {
+          fontSize: '0.875rem'
         }
       }
     },

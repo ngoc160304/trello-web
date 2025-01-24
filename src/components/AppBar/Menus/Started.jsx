@@ -32,7 +32,7 @@ const Started = () => {
         onClick={handleClick}
         endIcon={<KeyboardArrowDownIcon />}
         sx={{
-          fontWeight: '600'
+          color: 'white'
         }}
       >
         Started

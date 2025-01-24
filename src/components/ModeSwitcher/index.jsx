@@ -15,13 +15,38 @@ const ModeSwitcher = () => {
   };
   return (
     <FormControl sx={{ m: 1, minWidth: 120 }} size="small">
-      <InputLabel htmlFor="theme-dark-light-system">Mode</InputLabel>
+      <InputLabel
+        htmlFor="theme-dark-light-system"
+        sx={{
+          color: 'white',
+          '&.Mui-focused': {
+            color: 'white'
+          }
+        }}
+      >
+        Mode
+      </InputLabel>
       <Select
         labelId="theme-dark-light-system"
         id="demo-select-small"
         value={mode}
         label="Mode"
         onChange={handleChange}
+        sx={{
+          color: 'white',
+          '.MuiOutlinedInput-notchedOutline': {
+            borderColor: 'white'
+          },
+          '&:hover .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'white'
+          },
+          '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+            borderColor: 'white'
+          },
+          '&.MuiSvgIcon-root': {
+            color: 'white'
+          }
+        }}
       >
         <MenuItem value="light">
           <Box

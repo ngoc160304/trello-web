@@ -8,7 +8,8 @@ const Logo = () => {
       sx={{
         display: 'flex',
         alignItems: 'center',
-        gap: 1
+        gap: 1,
+        color: '#fff'
       }}
     >
       <SvgIcon component={TrelloIcon} inheritViewBox fontSize="small" />
