@@ -30,10 +30,10 @@ const BoardBar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         height: (theme) => theme.trello.boardBarHeight,
-        borderBottom: '2px solid #3498db',
         px: 2,
         gap: 2,
-        bgcolor: (theme) => (theme.palette.mode == 'dark' ? '#34495e' : '#1976d2')
+        bgcolor: (theme) => (theme.palette.mode == 'dark' ? '#34495e' : '#1976d2'),
+        overflowX: 'auto'
       }}
     >
       <Box
@@ -100,7 +100,8 @@ const BoardBar = () => {
             '& .MuiAvatar-root': {
               width: 32,
               height: 32,
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              cursor: 'pointer'
             },
             '& .MuiAvatar-colorDefault': {
               backgroundColor: 'primary.light'

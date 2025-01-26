@@ -1,9 +1,14 @@
 import { experimental_extendTheme as extendTheme } from '@mui/material/styles';
 
+const APP_BAR_HEIGHT = '58px';
+const BOARD_BAR_HEIGHT = '68px';
+const BOARD_CONTENT_HEIGHT = `calc(100vh - (${APP_BAR_HEIGHT} + ${BOARD_BAR_HEIGHT}))`
+
 const theme = extendTheme({
   trello: {
-    appBarHeight: '54px',
-    boardBarHeight: '60px'
+    appBarHeight: APP_BAR_HEIGHT,
+    boardBarHeight: BOARD_BAR_HEIGHT,
+    boardContentHeight: BOARD_CONTENT_HEIGHT
   },
   colorSchemes: {
     // light: {
@@ -65,11 +70,20 @@ const theme = extendTheme({
         }
       }
     },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          '&.MuiTypography-body1': {
+            fontSize: '0.875rem'
+          }
+        }
+      }
+    },
     MuiCssBaseline: {
       styleOverrides: `
       *::-webkit-scrollbar {
-        width: 0.4em;
-        height: 0.6em;
+        width: 8px;
+        height: 6px;
       }
       *::-webkit-scrollbar-track {
         background: #FAFAFA;
