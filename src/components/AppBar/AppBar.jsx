@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box';
-import ModeSwitcher from '../ModeSwitcher';
+import ModeSwitcher from '../ModeSwitcher/ModeSwitcher';
 import AppsIcon from '@mui/icons-material/Apps';
 import Logo from './Logo';
 import Workspaces from './Menus/Workspaces';
