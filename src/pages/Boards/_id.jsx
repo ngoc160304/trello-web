@@ -2,6 +2,7 @@ import Container from '@mui/material/Container';
 import BoardBar from './BoardBar/BoardBar';
 import BoardContent from './BoardContent/BoardContent';
 import AppBar from '../../components/AppBar/AppBar';
+import { mockData } from '../../apis/mock-data';
 const Board = () => {
   return (
     <Container
@@ -12,8 +13,8 @@ const Board = () => {
       }}
     >
       <AppBar />
-      <BoardBar />
-      <BoardContent />
+      <BoardBar board={mockData?.board} />
+      <BoardContent board={mockData?.board} />
     </Container>
   );
 };

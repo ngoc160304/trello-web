@@ -9,6 +9,7 @@ import AddToDriveIcon from '@mui/icons-material/AddToDrive';
 import BoltIcon from '@mui/icons-material/Bolt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import { capitalizeFirstLetter } from '../../../utils/formatters';
 const CustomChip = {
   color: '#fff',
   px: 1,
@@ -22,7 +23,7 @@ const CustomChip = {
   bgcolor: 'transparent',
   border: 'none'
 };
-const BoardBar = () => {
+const BoardBar = ({ board }) => {
   return (
     <Box
       sx={{
@@ -45,14 +46,14 @@ const BoardBar = () => {
       >
         <Chip
           icon={<DashboardIcon />}
-          label="NgocNguyenDev MERN Stack Board"
+          label={board?.title}
           variant="outlined"
           sx={CustomChip}
           clickable
         />
         <Chip
           icon={<VpnLockIcon />}
-          label="Public/private Workspace"
+          label={capitalizeFirstLetter(board.type)}
           variant="outlined"
           sx={CustomChip}
           clickable
