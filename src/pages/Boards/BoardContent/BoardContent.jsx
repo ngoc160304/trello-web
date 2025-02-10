@@ -54,6 +54,56 @@ const BoardContent = ({ board }) => {
       column.cards.map((card) => card._id)?.includes(cardId)
     );
   };
+  // cap nhat lai sate trong truong hop di chuyen card giua nhieu card khac nhau
+  const moveCardBetweenDifferntColumns = (
+    overColumn,
+    overCardId,
+    active,
+    over,
+    activeColumn,
+    activeDragingCardId,
+    activeDragingCardData
+  ) => {
+    setOrderedColumnsState((prevColumns) => {
+      // tim vi tri ma active card sap duoc tha
+      const overCardIndex = overColumn?.cards?.findIndex((card) => card._id === overCardId);
+      let newCardIndex;
+      const isBelowOverItem =
+        over &&
+        active.rect.current.translated &&
+        active.rect.current.translated.top > over.rect.top + over.rect.height;
+
+      const modifier = isBelowOverItem ? 1 : 0;
+
+      newCardIndex = overCardIndex >= 0 ? overCardIndex + modifier : overColumn?.cards?.length + 1;
+      const nextColumns = cloneDeep(prevColumns);
+      const nextActiveColumn = nextColumns.find((column) => column._id === activeColumn._id);
+      const nextOverColumn = nextColumns.find((column) => column._id === overColumn._id);
+      if (nextActiveColumn) {
+        //
+        nextActiveColumn.cards = nextActiveColumn.cards.filter(
+          (card) => card._id !== activeDragingCardId
+        );
+        nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map((card) => card._id);
+      }
+      if (nextOverColumn) {
+        //
+        nextOverColumn.cards = nextOverColumn.cards.filter(
+          (card) => card._id !== activeDragingCardId
+        );
+        // const rebuild_activeDragginfCardData = {
+        //   ...activeDragingCardData,
+        //   columnId: nextOverColumn._id
+        // };
+        nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, {
+          ...activeDragingCardData,
+          columnId: nextOverColumn._id
+        });
+        nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id);
+      }
+      return nextColumns;
+    });
+  };
   const handleDragStart = (e) => {
     setActiveDragItemId(e?.active?.id);
     setActiveDragItemType(
@@ -81,43 +131,15 @@ const BoardContent = ({ board }) => {
     // neu khong ton tai 1 trong 2 column k lam j het
     if (!activeColumn || !overColumn) return;
     if (activeColumn._id !== overColumn._id) {
-      setOrderedColumnsState((prevColumns) => {
-        // tim vi tri ma active card sap duoc tha
-        const overCardIndex = overColumn?.cards?.findIndex((card) => card._id === overCardId);
-        let newCardIndex;
-        const isBelowOverItem =
-          over &&
-          active.rect.current.translated &&
-          active.rect.current.translated.top > over.rect.top + over.rect.height;
-
-        const modifier = isBelowOverItem ? 1 : 0;
-
-        newCardIndex =
-          overCardIndex >= 0 ? overCardIndex + modifier : overColumn?.cards?.length + 1;
-        const nextColumns = cloneDeep(prevColumns);
-        const nextActiveColumn = nextColumns.find((column) => column._id === activeColumn._id);
-        const nextOverColumn = nextColumns.find((column) => column._id === overColumn._id);
-        if (nextActiveColumn) {
-          //
-          nextActiveColumn.cards = nextActiveColumn.cards.filter(
-            (card) => card._id !== activeDragingCardId
-          );
-          nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map((card) => card._id);
-        }
-        if (nextOverColumn) {
-          //
-          nextOverColumn.cards = nextOverColumn.cards.filter(
-            (card) => card._id !== activeDragingCardId
-          );
-          nextOverColumn.cards = nextOverColumn.cards.toSpliced(
-            newCardIndex,
-            0,
-            activeDragingCardData
-          );
-          nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id);
-        }
-        return nextColumns;
-      });
+      moveCardBetweenDifferntColumns(
+        overColumn,
+        overCardId,
+        active,
+        over,
+        activeColumn,
+        activeDragingCardId,
+        activeDragingCardData
+      );
     }
   };
   const handleDragEnd = (e) => {
@@ -135,8 +157,18 @@ const BoardContent = ({ board }) => {
 
       // neu khong ton tai 1 trong 2 column k lam j het
       if (!activeColumn || !overColumn) return;
+      // if(activeDragItemData.columnId != overColumn._id){ // kiem tra them truong hop nay
       if (oldColumnWhenDraggingCard._id != overColumn._id) {
         // keo tha giua card giua 2 column khac nhau
+        moveCardBetweenDifferntColumns(
+          overColumn,
+          overCardId,
+          active,
+          over,
+          activeColumn,
+          activeDragingCardId,
+          activeDragingCardData
+        );
       } else {
         // keo tha card torng 1 column
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
