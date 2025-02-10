@@ -45,6 +45,7 @@ const BoardContent = ({ board }) => {
   const [activeDragItemId, setActiveDragItemId] = useState(null);
   const [activeDragItemType, setActiveDragItemType] = useState(null);
   const [activeDragItemData, setActiveDragItemData] = useState(null);
+  const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null);
 
   // tim column theo cardId
   const findColumnByCardId = (cardId) => {
@@ -59,12 +60,15 @@ const BoardContent = ({ board }) => {
       e?.active?.data?.current?.columnId ? ACTIVE_DRAG_ITEM_TYPE.CARD : ACTIVE_DRAG_ITEM_TYPE.COLUMN
     );
     setActiveDragItemData(e?.active?.data?.current);
+    if (e?.active?.data?.current?.columnId) {
+      setOldColumnWhenDraggingCard(findColumnByCardId(e?.active?.id));
+    }
   };
   const handleDragOver = (e) => {
     // keo column thi k lam gi
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) return;
     const { active, over } = e;
-    if (!active && !over) return;
+    if (!active || !over) return;
     const {
       id: activeDragingCardId,
       data: { current: activeDragingCardData }
@@ -117,23 +121,57 @@ const BoardContent = ({ board }) => {
     }
   };
   const handleDragEnd = (e) => {
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
-      console.log('Hanh dong keo tha card - tam thoi chua lam chi');
-      return;
-    }
-
     const { active, over } = e;
-    if (!active && !over) return;
-    if (active.id != over.id) {
-      const oldIndex = orderedColumnsState.findIndex((c) => c._id === active.id);
-      const newIndex = orderedColumnsState.findIndex((c) => c._id === over.id);
-      const dndOrderedColumns = arrayMove(orderedColumnsState, oldIndex, newIndex);
-      // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id);
-      setOrderedColumnsState(dndOrderedColumns);
+    if (!active || !over) return;
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      const {
+        id: activeDragingCardId,
+        data: { current: activeDragingCardData }
+      } = active;
+      const { id: overCardId } = over;
+      // tim 2 column theo cardId
+      const activeColumn = findColumnByCardId(activeDragingCardId);
+      const overColumn = findColumnByCardId(overCardId);
+
+      // neu khong ton tai 1 trong 2 column k lam j het
+      if (!activeColumn || !overColumn) return;
+      if (oldColumnWhenDraggingCard._id != overColumn._id) {
+        // keo tha giua card giua 2 column khac nhau
+      } else {
+        // keo tha card torng 1 column
+        const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
+          (c) => c._id === activeDragItemId
+        );
+        const newCardIndex = overColumn?.cards?.findIndex((c) => c._id === overCardId);
+        const dndOrderedCards = arrayMove(
+          oldColumnWhenDraggingCard?.cards,
+          oldCardIndex,
+          newCardIndex
+        );
+        setOrderedColumnsState((prevColumns) => {
+          const nextColumns = cloneDeep(prevColumns);
+          // tim toi column dang tha
+          const targetColumn = nextColumns.find((c) => c._id === overColumn._id);
+          targetColumn.cards = dndOrderedCards;
+          targetColumn.cardOrderIds = dndOrderedCards.map((c) => c._id);
+          return nextColumns;
+        });
+      }
     }
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id != over.id) {
+        const oldColumnIndex = orderedColumnsState.findIndex((c) => c._id === active.id);
+        const newColumnIndex = orderedColumnsState.findIndex((c) => c._id === over.id);
+        const dndOrderedColumns = arrayMove(orderedColumnsState, oldColumnIndex, newColumnIndex);
+        // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id);
+        setOrderedColumnsState(dndOrderedColumns);
+      }
+    }
+    // nhung data sau khi keo tha luon phai dua ve gia tri null ban dau
     setActiveDragItemId(null);
     setActiveDragItemType(null);
     setActiveDragItemData(null);
+    setOldColumnWhenDraggingCard(null);
   };
   // hieu ung tha column , card
   const dropAnimation = {
