@@ -10,9 +10,13 @@ import {
   TouchSensor,
   DragOverlay,
   defaultDropAnimationSideEffects,
-  closestCorners
+  closestCorners,
+  pointerWithin,
+  rectIntersection,
+  getFirstCollision,
+  closestCenter
 } from '@dnd-kit/core';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import Column from './ListColumns/Column/Column';
 import Card from './ListColumns/Column/ListCards/Card/Card';
@@ -21,6 +25,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 };
+
 const BoardContent = ({ board }) => {
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 }
@@ -46,6 +51,8 @@ const BoardContent = ({ board }) => {
   const [activeDragItemType, setActiveDragItemType] = useState(null);
   const [activeDragItemData, setActiveDragItemData] = useState(null);
   const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState(null);
+  // diem va cham cuoi cung truoc do (xu ly thuat toan phat hien va cham);
+  const lastOverId = useRef(null);
 
   // tim column theo cardId
   const findColumnByCardId = (cardId) => {
@@ -215,6 +222,44 @@ const BoardContent = ({ board }) => {
       }
     })
   };
+  // custom thuat toan va cham
+  const collisionDetectionStrategy = useCallback(
+    (args) => {
+      if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+        return closestCorners({ ...args });
+      }
+      // tim cac diem giao nhau, va cham voi con tro
+      const pointerIntersections = pointerWithin(args);
+
+      // thuat toan phat hien va cham se tra ve mot mang cac va cham o day
+      const intersections =
+        pointerIntersections?.length > 0 ? pointerIntersections : rectIntersection(args);
+
+      // tim overId dau tien trong intersections o tren
+      let overId = getFirstCollision(intersections, 'id');
+
+      if (overId) {
+        const checkColumn = orderedColumnsState.find((column) => column._id === overId);
+        if (checkColumn) {
+          overId = closestCenter({
+            ...args,
+            droppableContainers: args.droppableContainers.filter(
+              (container) =>
+                container.id !== overId && checkColumn?.cardOrderIds?.includes(container.id)
+            )
+          })[0]?.id;
+        }
+        lastOverId.current = overId;
+        return [
+          {
+            id: overId
+          }
+        ];
+      }
+      return lastOverId.current ? [{ id: lastOverId.current }] : [];
+    },
+    [activeDragItemType, orderedColumnsState]
+  );
   useEffect(() => {
     const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id');
     setOrderedColumnsState(orderedColumns);
@@ -225,7 +270,8 @@ const BoardContent = ({ board }) => {
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       sensors={sensors}
-      collisionDetection={closestCorners}
+      // collisionDetection={closestCorners}
+      collisionDetection={collisionDetectionStrategy}
     >
       <Box
         sx={{
