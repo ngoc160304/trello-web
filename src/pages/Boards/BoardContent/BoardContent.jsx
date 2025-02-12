@@ -12,15 +12,16 @@ import {
   defaultDropAnimationSideEffects,
   closestCorners,
   pointerWithin,
-  rectIntersection,
-  getFirstCollision,
-  closestCenter
+  // rectIntersection,
+  getFirstCollision
+  // closestCenter
 } from '@dnd-kit/core';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
 import Column from './ListColumns/Column/Column';
 import Card from './ListColumns/Column/ListCards/Card/Card';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty } from 'lodash';
+import { generatePlaceholderCard } from '../../../utils/formatters';
 const ACTIVE_DRAG_ITEM_TYPE = {
   COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
@@ -86,11 +87,14 @@ const BoardContent = ({ board }) => {
       const nextColumns = cloneDeep(prevColumns);
       const nextActiveColumn = nextColumns.find((column) => column._id === activeColumn._id);
       const nextOverColumn = nextColumns.find((column) => column._id === overColumn._id);
+      // column cu
       if (nextActiveColumn) {
-        //
         nextActiveColumn.cards = nextActiveColumn.cards.filter(
           (card) => card._id !== activeDragingCardId
         );
+        if (isEmpty(nextActiveColumn.cards)) {
+          nextActiveColumn.cards = [generatePlaceholderCard(nextActiveColumn)];
+        }
         nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map((card) => card._id);
       }
       if (nextOverColumn) {
@@ -106,8 +110,10 @@ const BoardContent = ({ board }) => {
           ...activeDragingCardData,
           columnId: nextOverColumn._id
         });
+        nextOverColumn.cards = nextOverColumn.cards.filter((card) => !card.FE_PlaceholderCard);
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id);
       }
+
       return nextColumns;
     });
   };
@@ -230,18 +236,20 @@ const BoardContent = ({ board }) => {
       }
       // tim cac diem giao nhau, va cham voi con tro
       const pointerIntersections = pointerWithin(args);
-
+      if (!pointerIntersections?.length) {
+        return;
+      }
       // thuat toan phat hien va cham se tra ve mot mang cac va cham o day
-      const intersections =
-        pointerIntersections?.length > 0 ? pointerIntersections : rectIntersection(args);
+      // const intersections =
+      //   pointerIntersections?.length > 0 ? pointerIntersections : rectIntersection(args);
 
       // tim overId dau tien trong intersections o tren
-      let overId = getFirstCollision(intersections, 'id');
+      let overId = getFirstCollision(pointerIntersections, 'id');
 
       if (overId) {
         const checkColumn = orderedColumnsState.find((column) => column._id === overId);
         if (checkColumn) {
-          overId = closestCenter({
+          overId = closestCorners({
             ...args,
             droppableContainers: args.droppableContainers.filter(
               (container) =>
