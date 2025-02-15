@@ -10,6 +10,7 @@ import BoltIcon from '@mui/icons-material/Bolt';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { capitalizeFirstLetter } from '../../../utils/formatters';
+import { Tooltip } from '@mui/material';
 const CustomChip = {
   color: '#fff',
   px: 1,
@@ -44,16 +45,18 @@ const BoardBar = ({ board }) => {
           gap: 2
         }}
       >
-        <Chip
-          icon={<DashboardIcon />}
-          label={board?.title}
-          variant="outlined"
-          sx={CustomChip}
-          clickable
-        />
+        <Tooltip title={board?.description}>
+          <Chip
+            icon={<DashboardIcon />}
+            label={board?.title}
+            variant="outlined"
+            sx={CustomChip}
+            clickable
+          />
+        </Tooltip>
         <Chip
           icon={<VpnLockIcon />}
-          label={capitalizeFirstLetter(board.type)}
+          label={capitalizeFirstLetter(board?.type)}
           variant="outlined"
           sx={CustomChip}
           clickable

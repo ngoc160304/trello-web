@@ -9,7 +9,7 @@ const ListCards = ({ cards }) => {
           display: 'flex',
           flexDirection: 'column',
           gap: 1,
-          padding: '0 5px',
+          padding: '0 5px 5px 5px',
           mx: '5px',
           overflowX: 'hidden',
           overflowY: 'auto',
