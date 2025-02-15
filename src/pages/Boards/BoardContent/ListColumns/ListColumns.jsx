@@ -79,6 +79,7 @@ const ListColumns = ({ columns }) => {
             }}
           >
             <TextField
+              data-no-dnd="true"
               value={newColumnTitle}
               onChange={(e) => {
                 setNewColumnTitle(e.target.value);

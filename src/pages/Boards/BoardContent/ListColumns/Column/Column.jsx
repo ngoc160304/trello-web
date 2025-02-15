@@ -192,6 +192,7 @@ const Column = ({ column }) => {
               }}
             >
               <TextField
+                data-no-dnd="true"
                 value={newCardTitle}
                 onChange={(e) => {
                   setNewCardTitle(e.target.value);
@@ -236,6 +237,7 @@ const Column = ({ column }) => {
                 }}
               >
                 <Button
+                  data-no-dnd="true"
                   variant="contained"
                   color="success"
                   size="small"
@@ -252,6 +254,7 @@ const Column = ({ column }) => {
                   Add
                 </Button>
                 <CloseIcon
+                  data-no-dnd="true"
                   fontSize="small"
                   sx={{
                     // color: 'white',
