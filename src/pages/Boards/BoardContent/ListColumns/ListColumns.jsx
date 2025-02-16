@@ -4,18 +4,23 @@ import Button from '@mui/material/Button';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import TextField from '@mui/material/TextField';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
-import { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
-const ListColumns = ({ columns }) => {
+import { useState } from 'react';
+import { toast } from 'react-toastify';
+const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm);
   const [newColumnTitle, setNewColumnTitle] = useState('');
-  const addNewColumn = () => {
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
-      // console.error('dumoa m nhap di');
+      toast.error('dumoa m nhap di');
       return;
     }
     // console.log(newColumnTitle);
+    const newColumnData = {
+      title: newColumnTitle
+    };
+    await createNewColumn(newColumnData);
     toggleNewColumnForm();
     setNewColumnTitle('');
   };
@@ -35,7 +40,7 @@ const ListColumns = ({ columns }) => {
         }}
       >
         {columns.map((column) => (
-          <Column key={column._id} column={column} />
+          <Column key={column._id} column={column} createNewCard={createNewCard} />
         ))}
         {/* Box add new column */}
         {!openNewColumnForm ? (

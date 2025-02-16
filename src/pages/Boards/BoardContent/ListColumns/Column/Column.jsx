@@ -22,17 +22,25 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
-
-const Column = ({ column }) => {
+import { toast } from 'react-toastify';
+const Column = ({ column, createNewCard }) => {
   const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
   const [openNewCardForm, setOpenNewCardForm] = React.useState(false);
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm);
   const [newCardTitle, setNewCardTitle] = React.useState('');
-  const addNewCard = () => {
+  const addNewCard = async () => {
     if (!newCardTitle) {
-      // console.error('dumoa m nhap di');
+      toast.error('dumoa m nhap di', {
+        position: 'bottom-right'
+      });
       return;
     }
+    const newCardData = {
+      title: newCardTitle,
+      columnId: column._id
+    };
+    await createNewCard(newCardData);
+
     // console.log(newColumnTitle);
     toggleNewCardForm();
     setNewCardTitle('');
