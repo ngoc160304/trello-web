@@ -17,18 +17,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import Button from '@mui/material/Button';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 import ListCards from './ListCards/ListCards';
-import { mapOrder } from '../../../../../utils/sorts';
+// import { mapOrder } from '../../../../../utils/sorts';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { toast } from 'react-toastify';
 const Column = ({ column, createNewCard }) => {
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
+  // const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
   const [openNewCardForm, setOpenNewCardForm] = React.useState(false);
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm);
   const [newCardTitle, setNewCardTitle] = React.useState('');
-  const addNewCard = async () => {
+  const addNewCard = () => {
     if (!newCardTitle) {
       toast.error('dumoa m nhap di', {
         position: 'bottom-right'
@@ -39,7 +39,7 @@ const Column = ({ column, createNewCard }) => {
       title: newCardTitle,
       columnId: column._id
     };
-    await createNewCard(newCardData);
+    createNewCard(newCardData);
 
     // console.log(newColumnTitle);
     toggleNewCardForm();
@@ -166,7 +166,7 @@ const Column = ({ column, createNewCard }) => {
           </Box>
         </Box>
         {/* Cart container */}
-        <ListCards cards={orderedCards} />
+        <ListCards cards={column.cards} />
         {/* Column action */}
         <Box
           sx={{

@@ -11,7 +11,7 @@ const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm);
   const [newColumnTitle, setNewColumnTitle] = useState('');
-  const addNewColumn = async () => {
+  const addNewColumn = () => {
     if (!newColumnTitle) {
       toast.error('dumoa m nhap di');
       return;
@@ -20,7 +20,7 @@ const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
     const newColumnData = {
       title: newColumnTitle
     };
-    await createNewColumn(newColumnData);
+    createNewColumn(newColumnData);
     toggleNewColumnForm();
     setNewColumnTitle('');
   };
@@ -39,7 +39,7 @@ const ListColumns = ({ columns, createNewColumn, createNewCard }) => {
           }
         }}
       >
-        {columns.map((column) => (
+        {columns?.map((column) => (
           <Column key={column._id} column={column} createNewCard={createNewCard} />
         ))}
         {/* Box add new column */}

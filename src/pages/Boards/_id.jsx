@@ -10,17 +10,24 @@ import {
   fetchBoardDetailsAPI,
   createNewColumnAPI,
   createNewCardAPI,
-  updateBoardDetailsAPI
+  updateBoardDetailsAPI,
+  updateColumnDetailsAPI
 } from '../../apis';
+import { mapOrder } from '../../utils/sorts';
+import Box from '@mui/material/Box';
+import CircularProgress from '@mui/material/CircularProgress';
 const Board = () => {
   const [board, setBoard] = useState(null);
   useEffect(() => {
     const boardId = '67b03e67d2f46b2d63c07e20';
     fetchBoardDetailsAPI(boardId).then((record) => {
+      record.columns = mapOrder(record?.columns, record?.columnOrderIds, '_id');
       record.columns.forEach((column) => {
         if (isEmpty(column.cards)) {
           column.cards = [generatePlaceholderCard(column)];
           column.cardOrderIds = [generatePlaceholderCard(column)._id];
+        } else {
+          column.cards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
         }
       });
       setBoard(record);
@@ -60,16 +67,35 @@ const Board = () => {
     }
     setBoard(newBoard);
   };
-  const moveColumns = async (dndOrderedColumns) => {
+  const moveColumns = (dndOrderedColumns) => {
     const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
     const newBoard = { ...board };
     // newBoard.columns = dndOrderedColumns;
     newBoard.columnOrderIds = dndOrderedColumnsIds;
     setBoard(newBoard);
-    await updateBoardDetailsAPI(newBoard._id, {
+    updateBoardDetailsAPI(newBoard._id, {
       columnOrderIds: newBoard.columnOrderIds
     });
   };
+  const moveCardInTheSameColumn = (dndOrderedCards, dndOrderdCardIds, columnId) => {
+    const newBoard = { ...board };
+    const columnToUpdate = newBoard.columns.find((column) => column._id === columnId);
+    if (columnToUpdate) {
+      columnToUpdate.cards = dndOrderedCards;
+      columnToUpdate.cardOrderIds = dndOrderdCardIds;
+    }
+    setBoard(newBoard);
+    updateColumnDetailsAPI(columnId, {
+      cardOrderIds: dndOrderdCardIds
+    });
+  };
+  // if (!board) {
+  //   return (
+  //     <Box>
+  //       <CircularProgress />
+  //     </Box>
+  //   );
+  // }
   return (
     <Container
       disableGutters={true}
@@ -85,6 +111,7 @@ const Board = () => {
         createNewColumn={createNewColumn}
         createNewCard={createNewCard}
         moveColumns={moveColumns}
+        moveCardInTheSameColumn={moveCardInTheSameColumn}
       />
     </Container>
   );

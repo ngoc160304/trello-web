@@ -1,6 +1,6 @@
 import Box from '@mui/material/Box';
 import ListColumns from './ListColumns/ListColumns';
-import { mapOrder } from '../../../utils/sorts';
+// import { mapOrder } from '../../../utils/sorts';
 import {
   DndContext,
   // PointerSensor,
@@ -28,7 +28,13 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD'
 };
 
-const BoardContent = ({ board, createNewColumn, createNewCard, moveColumns }) => {
+const BoardContent = ({
+  board,
+  createNewColumn,
+  createNewCard,
+  moveColumns,
+  moveCardInTheSameColumn
+}) => {
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 }
   // });
@@ -184,7 +190,7 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumns }) =>
           activeDragingCardData
         );
       } else {
-        // keo tha card torng 1 column
+        // keo tha card trong 1 column
         const oldCardIndex = oldColumnWhenDraggingCard?.cards?.findIndex(
           (c) => c._id === activeDragItemId
         );
@@ -194,14 +200,16 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumns }) =>
           oldCardIndex,
           newCardIndex
         );
+        const dndOrderdCardIds = dndOrderedCards.map((c) => c._id);
         setOrderedColumnsState((prevColumns) => {
           const nextColumns = cloneDeep(prevColumns);
           // tim toi column dang tha
           const targetColumn = nextColumns.find((c) => c._id === overColumn._id);
           targetColumn.cards = dndOrderedCards;
-          targetColumn.cardOrderIds = dndOrderedCards.map((c) => c._id);
+          targetColumn.cardOrderIds = dndOrderdCardIds;
           return nextColumns;
         });
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderdCardIds, oldColumnWhenDraggingCard._id);
       }
     }
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
@@ -209,9 +217,9 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumns }) =>
         const oldColumnIndex = orderedColumnsState.findIndex((c) => c._id === active.id);
         const newColumnIndex = orderedColumnsState.findIndex((c) => c._id === over.id);
         const dndOrderedColumns = arrayMove(orderedColumnsState, oldColumnIndex, newColumnIndex);
+        setOrderedColumnsState(dndOrderedColumns);
         moveColumns(dndOrderedColumns);
         // const dndOrderedColumnsIds = dndOrderedColumns.map(c => c._id);
-        setOrderedColumnsState(dndOrderedColumns);
       }
     }
     // nhung data sau khi keo tha luon phai dua ve gia tri null ban dau
@@ -271,9 +279,9 @@ const BoardContent = ({ board, createNewColumn, createNewCard, moveColumns }) =>
     [activeDragItemType, orderedColumnsState]
   );
   useEffect(() => {
-    const orderedColumns = mapOrder(board?.columns, board?.columnOrderIds, '_id');
-    setOrderedColumnsState(orderedColumns);
+    setOrderedColumnsState(board?.columns);
   }, [board]);
+
   return (
     <DndContext
       onDragStart={handleDragStart}
