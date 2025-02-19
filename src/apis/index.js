@@ -10,6 +10,10 @@ export const updateBoardDetailsAPI = async (boardId, updateData) => {
   const request = await axios.put(`${API_ROOT}/v1/boards/${boardId}`, updateData);
   return request.data;
 };
+export const moveCardToDifferentColumnAPI = async (updateData) => {
+  const request = await axios.put(`${API_ROOT}/v1/boards/supports/moving_card`, updateData);
+  return request.data;
+};
 
 /** Boards */
 
@@ -20,6 +24,10 @@ export const createNewColumnAPI = async (newColumnData) => {
 };
 export const updateColumnDetailsAPI = async (columnId, updateData) => {
   const request = await axios.put(`${API_ROOT}/v1/columns/${columnId}`, updateData);
+  return request.data;
+};
+export const deletecolumnDetailsAPI = async (columnId) => {
+  const request = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`);
   return request.data;
 };
 /** Columns */

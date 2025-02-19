@@ -33,7 +33,9 @@ const BoardContent = ({
   createNewColumn,
   createNewCard,
   moveColumns,
-  moveCardInTheSameColumn
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn,
+  deleteColumnDetails
 }) => {
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 }
@@ -77,7 +79,8 @@ const BoardContent = ({
     over,
     activeColumn,
     activeDragingCardId,
-    activeDragingCardData
+    activeDragingCardData,
+    triggerFrom
   ) => {
     setOrderedColumnsState((prevColumns) => {
       // tim vi tri ma active card sap duoc tha
@@ -121,6 +124,14 @@ const BoardContent = ({
         nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card) => card._id);
       }
 
+      if (triggerFrom === 'handleDragEnd') {
+        moveCardToDifferentColumn(
+          activeDragingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        );
+      }
       return nextColumns;
     });
   };
@@ -158,7 +169,8 @@ const BoardContent = ({
         over,
         activeColumn,
         activeDragingCardId,
-        activeDragingCardData
+        activeDragingCardData,
+        'handleDragOver'
       );
     }
   };
@@ -187,7 +199,8 @@ const BoardContent = ({
           over,
           activeColumn,
           activeDragingCardId,
-          activeDragingCardData
+          activeDragingCardData,
+          'handleDragEnd'
         );
       } else {
         // keo tha card trong 1 column
@@ -305,6 +318,7 @@ const BoardContent = ({
           columns={orderedColumnsState}
           createNewColumn={createNewColumn}
           createNewCard={createNewCard}
+          deleteColumnDetails={deleteColumnDetails}
         />
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
