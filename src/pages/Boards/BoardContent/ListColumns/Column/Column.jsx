@@ -24,12 +24,20 @@ import CloseIcon from '@mui/icons-material/Close';
 import TextField from '@mui/material/TextField';
 import { toast } from 'react-toastify';
 import { useConfirm } from 'material-ui-confirm';
-const Column = ({ column, createNewCard, deleteColumnDetails }) => {
+import { createNewCardAPI, deletecolumnDetailsAPI } from '../../../../../apis';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  selectCurrentActiveBoard,
+  updateCurrentActiveBoard
+} from '../../../../../redux/activeBoard/activeBoardSlice';
+import { cloneDeep } from 'lodash';
+const Column = ({ column }) => {
   // const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
   const [openNewCardForm, setOpenNewCardForm] = React.useState(false);
   const toggleNewCardForm = () => setOpenNewCardForm(!openNewCardForm);
   const [newCardTitle, setNewCardTitle] = React.useState('');
-  const addNewCard = () => {
+
+  const addNewCard = async () => {
     if (!newCardTitle) {
       toast.error('dumoa m nhap di', {
         position: 'bottom-right'
@@ -40,13 +48,31 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       title: newCardTitle,
       columnId: column._id
     };
-    createNewCard(newCardData);
-
+    const createdCard = await createNewCardAPI({
+      ...newCardData,
+      boardId: board._id
+    });
+    // await fetchApi();
+    const newBoard = cloneDeep(board); // tương như create column
+    const columnToUpdate = newBoard.columns.find((column) => column._id === createdCard.columnId);
+    if (columnToUpdate) {
+      if (columnToUpdate.cards.some((card) => card.FE_PlaceholderCard)) {
+        columnToUpdate.cards = [createdCard];
+      } else {
+        columnToUpdate.cards.push(createdCard);
+        columnToUpdate.cardOrderIds.push(createdCard._id);
+      }
+    }
+    // setBoard(newBoard);
+    dispatch(updateCurrentActiveBoard(newBoard));
     // console.log(newColumnTitle);
     toggleNewCardForm();
     setNewCardTitle('');
   };
   // mui reusable components (research)
+
+  const board = useSelector(selectCurrentActiveBoard);
+  const dispatch = useDispatch();
   const confirmDeleteColumn = useConfirm();
   const handleDeleteColumn = () => {
     confirmDeleteColumn({
@@ -70,7 +96,14 @@ const Column = ({ column, createNewCard, deleteColumnDetails }) => {
       buttonOrder: ['confirm', 'cancel']
     })
       .then(() => {
-        deleteColumnDetails(column._id);
+        const newBoard = { ...board };
+        newBoard.columns = newBoard.columns.filter((c) => c._id !== column._id);
+        newBoard.columnOrderIds = newBoard.columns.map((c) => c._id);
+        // setBoard(newBoard);
+        dispatch(updateCurrentActiveBoard(newBoard));
+        deletecolumnDetailsAPI(column._id).then((result) => {
+          toast.success(result.deleteResult);
+        });
       })
       .catch(() => {});
   };

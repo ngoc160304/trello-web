@@ -7,11 +7,20 @@ import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortabl
 import CloseIcon from '@mui/icons-material/Close';
 import { useState } from 'react';
 import { toast } from 'react-toastify';
-const ListColumns = ({ columns, createNewColumn, createNewCard, deleteColumnDetails }) => {
+import { createNewColumnAPI } from '../../../../apis';
+import { generatePlaceholderCard } from '../../../../utils/formatters';
+import {
+  selectCurrentActiveBoard,
+  updateCurrentActiveBoard
+} from '../../../../redux/activeBoard/activeBoardSlice';
+import { useDispatch, useSelector } from 'react-redux';
+const ListColumns = ({ columns }) => {
   const [openNewColumnForm, setOpenNewColumnForm] = useState(false);
   const toggleNewColumnForm = () => setOpenNewColumnForm(!openNewColumnForm);
   const [newColumnTitle, setNewColumnTitle] = useState('');
-  const addNewColumn = () => {
+  const board = useSelector(selectCurrentActiveBoard);
+  const dispatch = useDispatch();
+  const addNewColumn = async () => {
     if (!newColumnTitle) {
       toast.error('dumoa m nhap di');
       return;
@@ -20,7 +29,23 @@ const ListColumns = ({ columns, createNewColumn, createNewCard, deleteColumnDeta
     const newColumnData = {
       title: newColumnTitle
     };
-    createNewColumn(newColumnData);
+    const createdColumn = await createNewColumnAPI({
+      ...newColumnData,
+      boardId: board._id
+    });
+    // console.log(createdColumn);
+    // await fetchApi();
+    createdColumn.cards = [generatePlaceholderCard(createdColumn)];
+    createdColumn.cardOrderIds = [generatePlaceholderCard(createdColumn)._id];
+    // const newBoard = cloneDeep(board);
+    const newBoard = { ...board };
+
+    // newBoard.columns.push(createdColumn);
+    newBoard.columns = [...newBoard.columns, createdColumn];
+    // newBoard.columnOrderIds.push(createdColumn._id);
+    newBoard.columnOrderIds = [...newBoard.columnOrderIds, createdColumn._id];
+
+    dispatch(updateCurrentActiveBoard(newBoard));
     toggleNewColumnForm();
     setNewColumnTitle('');
   };
@@ -40,12 +65,7 @@ const ListColumns = ({ columns, createNewColumn, createNewCard, deleteColumnDeta
         }}
       >
         {columns?.map((column) => (
-          <Column
-            key={column._id}
-            column={column}
-            createNewCard={createNewCard}
-            deleteColumnDetails={deleteColumnDetails}
-          />
+          <Column key={column._id} column={column} />
         ))}
         {/* Box add new column */}
         {!openNewColumnForm ? (
