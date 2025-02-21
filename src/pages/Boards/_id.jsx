@@ -20,14 +20,15 @@ import {
   selectCurrentActiveBoard
 } from '../../redux/activeBoard/activeBoardSlice';
 import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 const Board = () => {
   const dispatch = useDispatch();
   // const [board, setBoard] = useState(null); // dùng state của redux
   const board = useSelector(selectCurrentActiveBoard);
+  const { boardId } = useParams();
   useEffect(() => {
-    const boardId = '67b03e67d2f46b2d63c07e20';
     dispatch(fetchBoardDetailsAPI(boardId));
-  }, [dispatch]);
+  }, [dispatch, boardId]);
 
   const moveColumns = (dndOrderedColumns) => {
     const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
