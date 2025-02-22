@@ -30,6 +30,7 @@ import {
   selectCurrentActiveBoard,
   updateCurrentActiveBoard
 } from '../../../../../redux/activeBoard/activeBoardSlice';
+
 import { cloneDeep } from 'lodash';
 const Column = ({ column }) => {
   // const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
@@ -265,7 +266,11 @@ const Column = ({ column }) => {
                 justifyContent: 'space-between'
               }}
             >
-              <Button startIcon={<AddCardIcon />} onClick={toggleNewCardForm}>
+              <Button
+                startIcon={<AddCardIcon />}
+                onClick={toggleNewCardForm}
+                className="interceptor-loading"
+              >
                 Add new Card
               </Button>
               <Tooltip title="Drag to move">
@@ -340,6 +345,7 @@ const Column = ({ column }) => {
                     }
                   }}
                   onClick={addNewCard}
+                  className="interceptor-loading"
                 >
                   Add
                 </Button>

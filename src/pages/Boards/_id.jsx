@@ -11,9 +11,7 @@ import {
   moveCardToDifferentColumnAPI
 } from '../../apis';
 // import { mapOrder } from '../../utils/sorts';
-import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
-import Typography from '@mui/material/Typography';
+
 import {
   fetchBoardDetailsAPI,
   updateCurrentActiveBoard,
@@ -21,6 +19,7 @@ import {
 } from '../../redux/activeBoard/activeBoardSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import PageLoadingSpinner from '../../components/Loading/PageLoadingSpinner';
 const Board = () => {
   const dispatch = useDispatch();
   // const [board, setBoard] = useState(null); // dùng state của redux
@@ -91,21 +90,7 @@ const Board = () => {
   //   });
   // };
   if (!board) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100vw',
-          height: '100vh',
-          gap: 1
-        }}
-      >
-        <CircularProgress />
-        <Typography>Loading...</Typography>
-      </Box>
-    );
+    return <PageLoadingSpinner caption={'Loading...'} />;
   }
   return (
     <Container

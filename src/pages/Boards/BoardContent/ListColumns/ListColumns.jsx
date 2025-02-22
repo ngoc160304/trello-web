@@ -162,6 +162,7 @@ const ListColumns = ({ columns }) => {
                   }
                 }}
                 onClick={addNewColumn}
+                className="interceptor-loading"
               >
                 Add Column
               </Button>

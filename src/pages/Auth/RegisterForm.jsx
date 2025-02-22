@@ -20,15 +20,28 @@ import {
   PASSWORD_CONFIRMATION_MESSAGE
 } from '../../utils/validators';
 import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
 import FieldErrorAlert from '../../components/Form/FieldErrorAlert';
+import { registerUserAPI } from '../../apis';
+import { toast } from 'react-toastify';
 function RegisterForm() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch
   } = useForm();
-  const submitRegister = () => {};
+  const submitRegister = (data) => {
+    const { email, password } = data;
+    toast
+      .promise(registerUserAPI({ email, password }), {
+        pending: 'Registrations is in progress...'
+      })
+      .then((user) => {
+        navigate(`/login?registeredEmail=${user.email}`);
+      });
+  };
   return (
     <form onSubmit={handleSubmit(submitRegister)}>
       <Zoom in={true} style={{ transitionDelay: '200ms' }}>
@@ -113,7 +126,14 @@ function RegisterForm() {
             </Box>
           </Box>
           <CardActions sx={{ padding: '0 1em 1em 1em' }}>
-            <Button type="submit" variant="contained" color="primary" size="large" fullWidth>
+            <Button
+              className="interceptor-loading"
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              fullWidth
+            >
               Register
             </Button>
           </CardActions>

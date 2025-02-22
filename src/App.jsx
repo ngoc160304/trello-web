@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Board from './pages/Boards/_id.jsx';
 import NotFound from './pages/404/NotFound.jsx';
 import Auth from './pages/Auth/Auth.jsx';
+import AccountVerification from './pages/Auth/AccountVerification.jsx';
 function App() {
   return (
     <Routes>
@@ -13,6 +14,7 @@ function App() {
       {/* 404 not foundpage  */}
       <Route path="/login" element={<Auth />} />
       <Route path="/register" element={<Auth />} />
+      <Route path="/account/verification" element={<AccountVerification />} />
       <Route path="*" element={<NotFound />} />
       <Route />
     </Routes>
