@@ -1,5 +1,5 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
+// import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
@@ -30,8 +30,9 @@ import {
   selectCurrentActiveBoard,
   updateCurrentActiveBoard
 } from '../../../../../redux/activeBoard/activeBoardSlice';
-
 import { cloneDeep } from 'lodash';
+import ToggleFocusInput from '../../../../../components/Form/ToggleFocusInput';
+import { updateColumnDetailsAPI } from '../../../../../apis';
 const Column = ({ column }) => {
   // const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, '_id');
   const [openNewCardForm, setOpenNewCardForm] = React.useState(false);
@@ -129,6 +130,18 @@ const Column = ({ column }) => {
     height: '100%',
     opacity: isDragging ? 0.5 : undefined
   };
+  const onUpdateColumnTitle = (newTitle) => {
+    updateColumnDetailsAPI(column._id, {
+      title: newTitle
+    }).then(() => {
+      const newBoard = cloneDeep(board);
+      const columnToUpdate = newBoard.columns.find((c) => c._id === column._id);
+      if (columnToUpdate) {
+        columnToUpdate.title = newTitle;
+      }
+      dispatch(updateCurrentActiveBoard(newBoard));
+    });
+  };
   return (
     // Column
     <div ref={setNodeRef} style={dndKitColumnStyle} {...attributes}>
@@ -154,7 +167,12 @@ const Column = ({ column }) => {
             justifyContent: 'space-between'
           }}
         >
-          <Typography
+          <ToggleFocusInput
+            value={column?.title}
+            onChangedValue={onUpdateColumnTitle}
+            data-no-dnd={true}
+          />
+          {/* <Typography
             sx={{
               cursor: 'pointer',
               fontSize: '1rem',
@@ -163,7 +181,7 @@ const Column = ({ column }) => {
             variant="h6"
           >
             {column?.title}
-          </Typography>
+          </Typography> */}
           <Box>
             <Tooltip title="More option">
               <KeyboardArrowDownIcon

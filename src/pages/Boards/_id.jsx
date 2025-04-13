@@ -20,6 +20,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import PageLoadingSpinner from '../../components/Loading/PageLoadingSpinner';
+import ActiveCard from '../../components/Modal/ActiveCard/ActiveCard';
 const Board = () => {
   const dispatch = useDispatch();
   // const [board, setBoard] = useState(null); // dùng state của redux
@@ -100,6 +101,7 @@ const Board = () => {
         height: '100vh'
       }}
     >
+      <ActiveCard />
       <AppBar />
       <BoardBar board={board} />
       <BoardContent

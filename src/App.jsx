@@ -5,7 +5,8 @@ import Auth from './pages/Auth/Auth.jsx';
 import AccountVerification from './pages/Auth/AccountVerification.jsx';
 import { useSelector } from 'react-redux';
 import { selectCurrentUser } from './redux/User/userSlice.js';
-import { toast } from 'react-toastify';
+import Settings from './pages/Settings/Settings.jsx';
+import Boards from './pages/Boards/index.jsx';
 const ProtectedRoute = ({ user }) => {
   if (!user) {
     return <Navigate to="/login" replace={true} />;
@@ -17,10 +18,14 @@ function App() {
   return (
     <Routes>
       {/* Redirect route */}
-      <Route path="/" element={<Navigate to="/boards/67b03e67d2f46b2d63c07e20" replace={true} />} />
+      <Route path="/" element={<Navigate to="/boards" replace={true} />} />
       {/* Board Details */}
       <Route element={<ProtectedRoute user={currentUser} />}>
+        <Route path="/boards" element={<Boards />} />
         <Route path="/boards/:boardId" element={<Board />} />
+        {/* User Setting */}
+        <Route path="/settings/account" element={<Settings />} />
+        <Route path="/settings/security" element={<Settings />} />
       </Route>
 
       {/* 404 not foundpage  */}

@@ -9,7 +9,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useDispatch } from 'react-redux';
+import {
+  showModalActiveCard,
+  updateCurrentActiveCard
+} from '../../../../../../../redux/activeCard/activeCardSlice';
 const Card = ({ card }) => {
+  const dispatch = useDispatch();
+
   const shouldShowCardAction = () => {
     return !!card.memberIds?.length || !!card.comments?.length || !!card.attachments?.length;
   };
@@ -25,9 +32,15 @@ const Card = ({ card }) => {
     opacity: isDragging ? 0.5 : undefined,
     border: isDragging ? '1px solid #2ecc' : undefined
   };
+  const setActiveCard = () => {
+    // Cap nhat data cho cac active card tron redux
+    dispatch(updateCurrentActiveCard(card));
+    dispatch(showModalActiveCard());
+  };
   return (
     <>
       <MuiCard
+        onClick={setActiveCard}
         ref={setNodeRef}
         style={dndKitCardStyle}
         {...attributes}

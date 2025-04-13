@@ -10,6 +10,10 @@ import Tooltip from '@mui/material/Tooltip';
 import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
+import { useSelector, useDispatch } from 'react-redux';
+import { logoutUserAPI, selectCurrentUser } from '../../../redux/User/userSlice';
+import { useConfirm } from 'material-ui-confirm';
+import { Link } from 'react-router-dom';
 const Profile = () => {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -18,6 +22,20 @@ const Profile = () => {
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const dispatch = useDispatch();
+  const currentUser = useSelector(selectCurrentUser);
+  const confirmLoggout = useConfirm();
+  const handleLoggout = () => {
+    confirmLoggout({
+      title: 'Log out of your account',
+      confirmationText: 'Confirm',
+      cancellationText: 'Cancel'
+    })
+      .then(() => {
+        dispatch(logoutUserAPI(true));
+      })
+      .catch(() => {});
   };
   return (
     <>
@@ -36,6 +54,7 @@ const Profile = () => {
             <Avatar
               // src="https://scontent.fsgn2-9.fna.fbcdn.net/v/t39.30808-6/455186343_1662943734544055_516201500443258165_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=PLflno50jEYQ7kNvgGT73bN&_nc_oc=AdgPncstHnZxn9N7QREjp0qkUAksVXGmfWyw83T7J3IeBVYUjzS4ygKNwDgN7iXbjjTTd3kjctPn5XSqLVBQtURt&_nc_zt=23&_nc_ht=scontent.fsgn2-9.fna&_nc_gid=AVOJKkXjqeAL29i1kWFtl1w&oh=00_AYDhsNrMzxQfkE6AJBSZsS3SvDZr5lO9B69RL21ou3tEBA&oe=6796A87A"
               sx={{ width: 34, height: 34 }}
+              src={currentUser?.avatar}
             />
           </IconButton>
         </Tooltip>
@@ -45,6 +64,7 @@ const Profile = () => {
         id="account-menu"
         open={open}
         onClose={handleClose}
+        onClick={handleClose}
         PaperProps={{
           elevation: 0,
           sx: {
@@ -74,12 +94,17 @@ const Profile = () => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-        <MenuItem>
-          <Avatar /> Profile
-        </MenuItem>
-        <MenuItem>
-          <Avatar /> My account
-        </MenuItem>
+        <Link to={'/settings/account'} style={{ color: 'inherit' }}>
+          <MenuItem
+            sx={{
+              '&:hover': {
+                color: 'success.light'
+              }
+            }}
+          >
+            <Avatar src={currentUser?.avatar} /> Profile
+          </MenuItem>
+        </Link>
         <Divider />
         <MenuItem>
           <ListItemIcon>
@@ -93,9 +118,19 @@ const Profile = () => {
           </ListItemIcon>
           Settings
         </MenuItem>
-        <MenuItem>
+        <MenuItem
+          sx={{
+            '&:hover': {
+              color: 'warning.dark',
+              '& .logout-icon': {
+                color: 'warning.dark'
+              }
+            }
+          }}
+          onClick={handleLoggout}
+        >
           <ListItemIcon>
-            <Logout fontSize="small" />
+            <Logout className="logout-icon" fontSize="small" />
           </ListItemIcon>
           Logout
         </MenuItem>

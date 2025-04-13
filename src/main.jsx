@@ -1,6 +1,7 @@
 // import React from 'react';
 import ReactDOM from 'react-dom/client';
 import CssBaseline from '@mui/material/CssBaseline';
+import GlobalStyles from '@mui/material/GlobalStyles';
 import App from './App.jsx';
 import theme from './theme.js';
 import { Experimental_CssVarsProvider as CssVarsProvider } from '@mui/material/styles';
@@ -11,14 +12,18 @@ import { store } from './redux/store.js';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { persistStore } from 'redux-persist';
+import { injectStore } from './utils/authorizeAxios.js';
+
 const persistor = persistStore(store);
 // Cấu hình react-router-dom với browserRouter
 import { BrowserRouter } from 'react-router-dom';
+// Ky thuat inject store
+injectStore(store);
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <BrowserRouter basename="/">
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
+  <Provider store={store}>
+    <PersistGate persistor={persistor}>
+      <BrowserRouter basename="/">
         <CssVarsProvider theme={theme}>
           <ConfirmProvider
             defaultOptions={{
@@ -36,12 +41,19 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               }
             }}
           >
+            <GlobalStyles
+              styles={{
+                a: {
+                  textDecoration: 'none'
+                }
+              }}
+            />
             <CssBaseline />
             <App />
             <ToastContainer position="bottom-left" theme="colored" />
           </ConfirmProvider>
         </CssVarsProvider>
-      </PersistGate>
-    </Provider>
-  </BrowserRouter>
+      </BrowserRouter>
+    </PersistGate>
+  </Provider>
 );

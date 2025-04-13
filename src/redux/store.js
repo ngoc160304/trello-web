@@ -2,6 +2,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { activeBoardReducer } from './activeBoard/activeBoardSlice';
 import { userReducer } from './User/userSlice';
+import { activeCardReducer } from './activeCard/activeCardSlice';
+import { notificationsReducer } from './notifications/notificationsSlice';
 // Cau hinh redux persist
 import { combineReducers } from 'redux'; // luu y chung ta co san redux trong node_moduleboi vi khi cai redux toolkit se kem theo redux
 import { persistReducer } from 'redux-persist';
@@ -16,7 +18,9 @@ const rootPersistConfig = {
 // combine các reducers trong dự án
 const reducers = combineReducers({
   activeBoard: activeBoardReducer,
-  user: userReducer
+  user: userReducer,
+  activeCard: activeCardReducer,
+  notifications: notificationsReducer
 });
 // thuc hien persist reducer
 const persistedReducer = persistReducer(rootPersistConfig, reducers);

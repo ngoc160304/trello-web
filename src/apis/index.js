@@ -21,7 +21,15 @@ export const moveCardToDifferentColumnAPI = async (updateData) => {
   );
   return request.data;
 };
-
+export const fetchBoardsAPI = async (searchPath) => {
+  const request = await authorizeAxiosIntance.get(`${API_ROOT}/v1/boards${searchPath}`);
+  return request.data;
+};
+export const createNewBoardAPI = async (data) => {
+  const request = await authorizeAxiosIntance.post(`${API_ROOT}/v1/boards`, data);
+  toast.success('Create new successfully !');
+  return request.data;
+};
 /** Boards */
 
 /** Columns */
@@ -44,13 +52,17 @@ export const createNewCardAPI = async (newCardData) => {
   const request = await authorizeAxiosIntance.post(`${API_ROOT}/v1/cards`, newCardData);
   return request.data;
 };
+export const updateCardDetailsAPI = async (cardId, newCardData) => {
+  const request = await authorizeAxiosIntance.put(`${API_ROOT}/v1/cards/${cardId}`, newCardData);
+  return request.data;
+};
 /** Card */
 
 /** Users */
 export const registerUserAPI = async (data) => {
-  const response = await authorizeAxiosIntance.post(`${API_ROOT}/v1/users/resister`, data);
+  const response = await authorizeAxiosIntance.post(`${API_ROOT}/v1/users/register`, data);
   toast.success(
-    'Account created successfully! Please check and veridy your account before logging in!'
+    'Account created successfully! Please check your email and veridy your account before logging in!'
   );
   return response.data;
 };
@@ -64,4 +76,16 @@ export const verifiUserAPI = async (data) => {
   );
   return response.data;
 };
+export const refreshTokenAPI = async () => {
+  const response = await authorizeAxiosIntance.get(`${API_ROOT}/v1/users/refresh_token`);
+  return response.data;
+};
 /** Users */
+
+/** invite user */
+export const invitedUserToBoardAPI = async (data) => {
+  const response = await authorizeAxiosIntance.post(`${API_ROOT}/v1/invitations/board`, data);
+  toast.success('User invited to board successfully');
+  return response.data;
+};
+/** invite user */

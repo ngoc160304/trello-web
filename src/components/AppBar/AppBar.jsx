@@ -7,8 +7,8 @@ import Templates from './Menus/Templates';
 import Started from './Menus/Started';
 import Recent from './Menus/Recent';
 import TextField from '@mui/material/TextField';
-import Badge from '@mui/material/Badge';
-import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+// import Badge from '@mui/material/Badge';
+// import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import Tooltip from '@mui/material/Tooltip';
 import Profile from './Menus/Profile';
@@ -17,7 +17,10 @@ import AddIcon from '@mui/icons-material/Add';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
+import Notifications from './Notifications/Notifications';
 import { useState } from 'react';
+import AutoCompleteSearchBoard from './SearchBoards/AutoCompleteSearchBoard';
+import { Link } from 'react-router-dom';
 const AppBar = () => {
   const [searchValue, setSearchValue] = useState('');
   return (
@@ -42,12 +45,19 @@ const AppBar = () => {
             gap: 2
           }}
         >
-          <AppsIcon
-            sx={{
-              color: '#fff'
-            }}
-          />
-          <Logo />
+          <Link to="/boards">
+            <Tooltip title="Board list">
+              <AppsIcon
+                sx={{
+                  color: '#fff',
+                  verticalAlign: 'middle'
+                }}
+              />
+            </Tooltip>
+          </Link>
+          <Link to="/">
+            <Logo />
+          </Link>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
             <Workspaces />
             <Templates />
@@ -70,7 +80,7 @@ const AppBar = () => {
             gap: 2
           }}
         >
-          <TextField
+          {/* <TextField
             value={searchValue}
             onChange={(e) => {
               setSearchValue(e.target.value);
@@ -124,13 +134,15 @@ const AppBar = () => {
                 </InputAdornment>
               )
             }}
-          />
+          /> */}
+          <AutoCompleteSearchBoard />
           <ModeSwitcher />
-          <Tooltip title="Notification">
+          {/* <Tooltip title="Notification">
             <Badge color="warning" variant="dot">
               <NotificationsNoneIcon sx={{ color: '#fff' }} />
             </Badge>
-          </Tooltip>
+          </Tooltip> */}
+          <Notifications />
           <Tooltip title="Help">
             <HelpOutlineIcon sx={{ color: '#fff' }} />
           </Tooltip>
